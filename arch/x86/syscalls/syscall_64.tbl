@@ -323,6 +323,10 @@
 314	common	sched_setattr		sys_sched_setattr
 315	common	sched_getattr		sys_sched_getattr
 316	common	renameat2		sys_renameat2
+317	64	krun_read_msrs		sys_krun_read_msrs
+318	64	krun_reset_msrs		sys_krun_reset_msrs
+319	64	krun_configure		sys_krun_reset_msrs
+
 
 #
 # x32-specific system call numbers start at 512 to avoid cache impact

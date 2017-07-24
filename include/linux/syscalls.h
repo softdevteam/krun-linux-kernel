@@ -867,3 +867,7 @@ asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
 			 unsigned long idx1, unsigned long idx2);
 asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
 #endif
+asmlinkage int sys_krun_read_msrs(int n_cores, bool ctr1_first, u64 *aperfs,
+    u64 *mperfs, u64 *ctr1s);
+asmlinkage void sys_krun_reset_msrs(int n_cores);
+asmlinkage int sys_krun_configure(int n_cores);
