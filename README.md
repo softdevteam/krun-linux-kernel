@@ -1,10 +1,10 @@
 # The Krun Linux Kernel
 
-This repo houses the customised Linux Kernel for use with the
+This repo houses the customised Linux-4.9.0 Kernel for use with the
 [Krun Benchmarking System](https://github.com/softdevteam/krun).
 
 This kernel has additional system calls for low-latency access to several MSRs
-which Krun uses for benchmarking. Although the existing `msr' (and `rmsr')
+which Krun uses for benchmarking. Although the existing `msr` (and `rmsr`)
 modules provide access to MSRs via device nodes, they introduce too much jitter
 into measurements.
 
@@ -13,29 +13,30 @@ into measurements.
 This section describes the setup of the Krun kernel, including putting the
 kernel into `full tickless mode', which Krun insists upon.
 
-### Step 1: Get the Code and Switch to the Right Branch
+### Step 1: Make Sure You Are on the Right Branch
 
-First find the right branch of this repo for your needs. We have made a branch
-stemming from each upstream stable release tag for which we wish to support
-Krun on.
+This branch is for kernel version 4.9 (also named 4.9.0).
 
-So far we only support the Kernel version shipped with Debian 8, which is
-version 3.16.36.
+If this is not the version you want, then switch branch. To see which Kernel
+versions we have patched, run:
 
-The patched code for 3.16.36 is stored in the `linux-3.16.36-krun` branch. Make
-sure you are in this branch with `git checkout linux-3.16.36-krun`.
+```
+$ git branch -r | grep krun
+```
+
+Our branches are named `linux-\*-krun`.
 
 ### Step 2: Configure and Build the Kernel
 
 Krun insists the kernel is running in "full tickless mode", thus minimising
 regular tick interrupts where possible (for all but the boot CPU core).
 
-The kernel installation process varys depending on the Linux distribution. We
+The kernel installation process varies depending on the Linux distribution. We
 assume you will be using Debian, since this is the Linux distribution Krun is
 designed to run on.
 
 On a Debian machine, the easiest way to build the kernel, and to have the
-custom headers installed in the right place, is to build and installi deb
+custom headers installed in the right place, is to build and install deb
 packages.
 
  * Whilst running the stock Debian kernel (the configuration from the new
@@ -55,7 +56,7 @@ packages.
 
  * Save and exit.
 
- * Run `make`
+ * Run `make` (for a real benchmarking setup do *not* use `-j`)
 
  * Run `make deb-pkg`
 
@@ -94,9 +95,7 @@ For more information on tickless mode, see
 [the kernel docs](https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt).
 
 For more information about `make deb-pkg`, see
-[the debian handbook](https://debian-handbook.info/browse/stable/sect.kernel-compilation.html).
-
-If you are having trouble setting your default kernel, [this may help](
+[the Debian handbook](https://debian-handbook.info/browse/stable/sect.kernel-compilation.html).
 
 ## License
 
