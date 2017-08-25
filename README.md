@@ -1,6 +1,6 @@
 # The Krun Linux Kernel
 
-This repo houses the customised Linux Kernel for use with the
+This repo houses the customised Linux-3.16.3 kernel for use with the
 [Krun Benchmarking System](https://github.com/softdevteam/krun).
 
 This kernel has additional system calls for low-latency access to several MSRs
@@ -13,17 +13,18 @@ into measurements.
 This section describes the setup of the Krun kernel, including putting the
 kernel into `full tickless mode', which Krun insists upon.
 
-### Step 1: Get the Code and Switch to the Right Branch
+### Step 1: Make Sure You Are on the Right Branch
 
-First find the right branch of this repo for your needs. We have made a branch
-stemming from each upstream stable release tag for which we wish to support
-Krun on.
+This branch is for kernel version 3.16.3.
 
-So far we only support the Kernel version shipped with Debian 8, which is
-version 3.16.36.
+If this is not the version you want, then switch branch. To see which Kernel
+versions we have patched, run:
 
-The patched code for 3.16.36 is stored in the `linux-3.16.36-krun` branch. Make
-sure you are in this branch with `git checkout linux-3.16.36-krun`.
+```
+$ git branch -r | grep krun
+```
+
+Our branches are named `linux-*-krun`.
 
 ### Step 2: Configure and Build the Kernel
 
@@ -64,7 +65,7 @@ packages.
 The previous step should have created deb packages in the parent directory. Next:
 
  * Install them with `dpkg -i <files>`, where `<files>` are the deb packages
-   you want to install. You will need to install the: `linux-firmware-image`,
+   you want to install. You will need to install the: `linux-image`, `linux-firmware-image`,
    `linux-headers` and `linux-libc-dev` packages (whose exact names will vary).
 
  * Reboot the system and check the kernel is running with `uname -r`. Debian
