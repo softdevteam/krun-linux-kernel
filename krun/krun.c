@@ -39,9 +39,10 @@ asmlinkage int sys_krun_configure(int n_cores);
 #define IA32_MPERF		0xe7
 #define IA32_PERF_FIXED_CTR1	0x30a
 #define IA32_FIXED_CTR_CTRL	0x38d
+#define IA32_PERF_GLOBAL_CTRL	0x38f
 
 /*
- * Bitfields of MSR_IA32_FIXED_CTR_CTRL related to fixed counter 1.
+ * Bitfields of IA32_FIXED_CTR_CTRL related to fixed counter 1.
  * AKA, CPU_CLK_UNHLATED.CORE in the Intel manual.
  */
 // Enable couting in ring 0
@@ -50,6 +51,10 @@ asmlinkage int sys_krun_configure(int n_cores);
 #define EN1_USR		1 << 5
 // Enable counting for all core threads (if any)
 #define EN1_ANYTHR	1 << 6
+
+/* Bitfields in the IA32_PERF_GLOBAL_CTRL MSR */
+// Enable IA32_PERF_FIXED_CTR1
+#define EN_FIXED_CTR1	1 << 1  // top 32-bits
 
 /* For passing args to krun_read_msrs() */
 struct krun_msr_args {
@@ -197,6 +202,21 @@ asmlinkage int sys_krun_configure(int n_cores) {
 	int err, core;
 
 	for (core = 0; core < n_cores; core++) {
+		/* Turn on the counter */
+		err = rdmsr_safe_on_cpu(core, IA32_PERF_GLOBAL_CTRL, &lo, &hi);
+		if (err) {
+			printk("problem reading IA32_PERF_GLOBAL_CTRL\n");
+			return err;
+		}
+		hi |= EN_FIXED_CTR1;
+
+		err = wrmsr_safe_on_cpu(core, IA32_PERF_GLOBAL_CTRL, lo, hi);
+		if (err) {
+			printk("problem writing IA32_PERF_GLOBAL_CTRL\n");
+			return err;
+		}
+
+		/* Define what is being counted */
 		err = rdmsr_safe_on_cpu(core, IA32_FIXED_CTR_CTRL, &lo, &hi);
 		if (err) {
 			printk("problem reading IA32_FIXED_CTR_CTRL\n");
