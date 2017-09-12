@@ -33,6 +33,7 @@ asmlinkage int sys_krun_read_msrs(int n_cores, bool ctr1_first, u64 *aperfs,
     u64 *mperfs, u64 *ctr1s);
 asmlinkage void sys_krun_reset_msrs(int n_cores);
 asmlinkage int sys_krun_configure(int n_cores);
+u8 krun_get_arch_perf_ctr_version(void);
 
 /* MSRs */
 #define IA32_APERF		0xe8
@@ -55,6 +56,12 @@ asmlinkage int sys_krun_configure(int n_cores);
 /* Bitfields in the IA32_PERF_GLOBAL_CTRL MSR */
 // Enable IA32_PERF_FIXED_CTR1
 #define EN_FIXED_CTR1	1 << 1  // top 32-bits
+
+/* Archtectural performance counter CPUID leaf */
+#define	CPUID_ARCH_PERF_CTRS	0x0a
+
+/* Bit fields of CPUID_ARCH_PERF_CTRS */
+#define CPUID_ARCH_PERF_CTRS_VERS	0xff
 
 /* For passing args to krun_read_msrs() */
 struct krun_msr_args {
@@ -124,6 +131,20 @@ void krun_reset_msrs(void *unused)
 	    :				// out
 	    : "i"(IA32_MPERF), "i"(IA32_APERF), "i"(IA32_PERF_FIXED_CTR1) // in
 	    :"eax", "ecx", "edx");	// clobber
+}
+
+u8 krun_get_arch_perf_ctr_version()
+{
+	u32 eax;
+
+	asm volatile(
+	    "mov %1, %%eax\n\t"
+	    "cpuid\n\t"
+	    : "=a" (eax)			// out
+	    : "i"(CPUID_ARCH_PERF_CTRS) 	// in
+	    :"ebx", "ecx", "edx");		// clobber
+
+	return eax & CPUID_ARCH_PERF_CTRS_VERS;
 }
 
 /* ------------------------
@@ -200,7 +221,9 @@ asmlinkage int sys_krun_configure(int n_cores) {
 	 */
 	u32 hi, lo;
 	int err, core;
+	u8 ctrs_version;
 
+	ctrs_version = krun_get_arch_perf_ctr_version();
 	for (core = 0; core < n_cores; core++) {
 		/* Turn on the counter */
 		err = rdmsr_safe_on_cpu(core, IA32_PERF_GLOBAL_CTRL, &lo, &hi);
@@ -224,7 +247,11 @@ asmlinkage int sys_krun_configure(int n_cores) {
 		}
 
 		/* All of the flags are in the lower 32-bits of the MSR */
-		lo |= (EN1_OS | EN1_USR | EN1_ANYTHR);
+		lo |= (EN1_OS | EN1_USR);
+		if (ctrs_version >= 3) {
+			// ANYTHR flag available only after performance counters v3
+			lo |= EN1_ANYTHR;
+		}
 
 		err = wrmsr_safe_on_cpu(core, IA32_FIXED_CTR_CTRL, lo, hi);
 		if (err) {
