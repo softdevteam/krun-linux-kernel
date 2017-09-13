@@ -57,11 +57,10 @@ int get_ctr1_width(void) {
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
     u_int64_t *mperfs, u_int64_t *ctr1s)
 {
-	int err = syscall(__NR_krun_read_msrs, n_cores, ctr1_first, aperfs, mperfs, ctr1s);
-	if (err != 0) {
-		printf("syscall returned: %ld\n", err);
-		exit(err);
-    }
+	int rv = syscall(__NR_krun_read_msrs, n_cores, ctr1_first, aperfs, mperfs, ctr1s);
+	if (rv != 0) {
+		err(EXIT_FAILURE, "krun_read_msrs failed");
+	}
 }
 
 /* allocates space for 2 readings of one performance counter for all cores */
@@ -72,15 +71,13 @@ u_int64_t **alloc_array(int n_cores)
 
 	arr = calloc(2, sizeof(u_int64_t *));
 	if (arr == NULL) {
-		printf("failed to allocate\n");
-		exit(EXIT_FAILURE);
+		errx(EXIT_FAILURE, "calloc");
 	}
 
 	for (i = 0; i < 2; i++) {
 		arr[i] = calloc(n_cores, sizeof(u_int64_t));
 		if (arr[i] == NULL) {
-			printf("failed to allocate\n");
-			exit(EXIT_FAILURE);
+			errx(EXIT_FAILURE, "calloc");
 		}
 	}
 	return arr;
@@ -115,13 +112,13 @@ void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs, u_int64_t
 
 			// check they make sense too
 			if (aperfs[0][core] > aperfs[1][core]) {
-				errx(1, "bad aperfs");
+				err(EXIT_FAILURE, "bad aperfs");
 			}
 			if (mperfs[0][core] > mperfs[1][core]) {
-				errx(1, "bad mperfs");
+				err(EXIT_FAILURE, "bad mperfs");
 			}
 			if (ctr1s[0][core] > ctr1s[1][core]) {
-				errx(1, "bad ctr1");
+				err(EXIT_FAILURE, "bad ctr1");
 			}
 		}
 	}
