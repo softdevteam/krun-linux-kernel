@@ -26,6 +26,8 @@
 #include <asm/msr.h>
 #include <linux/uaccess.h>
 
+#include "krun_reg.h"
+
 /* protos */
 void krun_read_msrs(void *data);
 void krun_reset_msrs(void *unused);
@@ -34,34 +36,6 @@ asmlinkage int sys_krun_read_msrs(int n_cores, bool ctr1_first, u64 *aperfs,
 asmlinkage void sys_krun_reset_msrs(int n_cores);
 asmlinkage int sys_krun_configure(int n_cores);
 u8 krun_get_arch_perf_ctr_version(void);
-
-/* MSRs */
-#define IA32_APERF		0xe8
-#define IA32_MPERF		0xe7
-#define IA32_PERF_FIXED_CTR1	0x30a
-#define IA32_FIXED_CTR_CTRL	0x38d
-#define IA32_PERF_GLOBAL_CTRL	0x38f
-
-/*
- * Bitfields of IA32_FIXED_CTR_CTRL related to fixed counter 1.
- * AKA, CPU_CLK_UNHLATED.CORE in the Intel manual.
- */
-// Enable couting in ring 0
-#define EN1_OS		1 << 4
-// Enable counting in higer rings
-#define EN1_USR		1 << 5
-// Enable counting for all core threads (if any)
-#define EN1_ANYTHR	1 << 6
-
-/* Bitfields in the IA32_PERF_GLOBAL_CTRL MSR */
-// Enable IA32_PERF_FIXED_CTR1
-#define EN_FIXED_CTR1	1 << 1  // top 32-bits
-
-/* Archtectural performance counter CPUID leaf */
-#define	CPUID_ARCH_PERF_CTRS	0x0a
-
-/* Bit fields of CPUID_ARCH_PERF_CTRS */
-#define CPUID_ARCH_PERF_CTRS_VERS	0xff
 
 /* For passing args to krun_read_msrs() */
 struct krun_msr_args {

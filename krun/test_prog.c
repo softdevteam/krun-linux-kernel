@@ -28,6 +28,8 @@
 #include <err.h>
 #include <asm/unistd.h>
 
+#include "krun_reg.h"
+
 /* protos */
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
     u_int64_t *mperfs, u_int64_t *ctr1s);
@@ -44,12 +46,12 @@ int get_ctr1_width(void) {
 	int width;
 
 	asm volatile(
-	    "mov $0xa, %%eax\n\t"       // pctr leaf
+	    "mov %2, %%eax\n\t"       	// pctr leaf
 	    "cpuid\n\t"
 	    : "=a" (eax), "=d" (edx)    // out
-	    :                           // in
+	    : "i"(CPUID_ARCH_PERF_CTRS) // in
 	    : "ebx", "ecx");            // clobber
-	width = (edx & 0x1fe0) >> 5;
+	width = (edx & CPUID_FIXED_PERF_CTRS_WIDTH) >> 5;
 	printf("ctr1 width is %d\n", width);
 	return width;
 }
@@ -57,7 +59,8 @@ int get_ctr1_width(void) {
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
     u_int64_t *mperfs, u_int64_t *ctr1s)
 {
-	int rv = syscall(__NR_krun_read_msrs, n_cores, ctr1_first, aperfs, mperfs, ctr1s);
+	int rv = syscall(__NR_krun_read_msrs, n_cores, ctr1_first, aperfs,
+	    mperfs, ctr1s);
 	if (rv != 0) {
 		err(EXIT_FAILURE, "krun_read_msrs failed");
 	}
@@ -95,7 +98,8 @@ void mask_ctr1s(int n_cores, u_int64_t **ctr1s)
 }
 
 /* print before and after readings for all counters */
-void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs, u_int64_t **ctr1s)
+void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs,
+    u_int64_t **ctr1s)
 {
 	int core, idx;
 
@@ -106,7 +110,8 @@ void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs, u_int64_t
 			printf("After:\n");
 		}
 		for (core = 0; core < n_cores; core++) {
-			printf("  core: %02d: aperf: %016" PRIu64 "    ", core, aperfs[idx][core]);
+			printf("  core: %02d: aperf: %016" PRIu64 "    ",
+			    core, aperfs[idx][core]);
 			printf("mperf: %016" PRIu64 "    ", mperfs[idx][core]);
 			printf("ctr1 : %016" PRIu64 "\n", ctr1s[idx][core]);
 
