@@ -30,6 +30,16 @@
 
 #include "krun_reg.h"
 
+/*
+ * For testing when you don't have the libc-dev headers installed, you can
+ * uncomment these macros. These must stay in-sync with the syscall table.
+ */
+#if 0
+#define __NR_krun_read_msrs	332
+#define __NR_krun_reset_msrs	333
+#define __NR_krun_configure	334
+#endif
+
 /* protos */
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
     u_int64_t *mperfs, u_int64_t *ctr1s);
