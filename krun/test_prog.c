@@ -132,7 +132,7 @@ void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs,
 int main(void)
 {
 	u_int64_t **aperfs, **mperfs, **ctr1s;
-	int core, i, n_cores;
+	int n_cores;
 
 	ctr1_mask = ((u_int64_t) 1 << get_ctr1_width()) - 1;
 	printf("ctr1 mask is %" PRIx64 "\n", ctr1_mask);
