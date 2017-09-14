@@ -56,32 +56,32 @@ void krun_read_msrs(void *data)
 	if (args->ctr1_first) {
 		asm volatile(
 		    "rdmsr\n\t"
-		    : "=d" (hi), "=a" (lo)	// out
-		    : "c"(IA32_PERF_FIXED_CTR1) // in
-		    :);				// clobber
+		    : "=d" (hi), "=a" (lo)	/* out */
+		    : "c"(IA32_PERF_FIXED_CTR1) /* in */
+		    :);				/* clobber */
 		args->ctr1 = ((u64) hi << 32) | lo;
 	}
 
 	asm volatile(
 	    "rdmsr\n\t"
-	    : "=d" (hi), "=a" (lo)	// out
-	    : "c"(IA32_APERF)		// in
-	    :);				// clobber
+	    : "=d" (hi), "=a" (lo)	/* out */
+	    : "c"(IA32_APERF)		/* in */
+	    :);				/* clobber */
 	args->aperf = ((u64) hi << 32) | lo;
 
 	asm volatile(
 	    "rdmsr\n\t"
-	    : "=d" (hi), "=a" (lo)	// out
-	    : "c"(IA32_MPERF)		// in
-	    : );			// clobber
+	    : "=d" (hi), "=a" (lo)	/* out */
+	    : "c"(IA32_MPERF)		/* in */
+	    : );			/* clobber */
 	args->mperf = ((u64) hi << 32) | lo;
 
 	if (!args->ctr1_first) {
 		asm volatile(
 		    "rdmsr\n\t"
-		    : "=d" (hi), "=a" (lo)	// out
-		    : "c"(IA32_PERF_FIXED_CTR1) // in
-		    :);				// clobber
+		    : "=d" (hi), "=a" (lo)	/* out */
+		    : "c"(IA32_PERF_FIXED_CTR1) /* in */
+		    :);				/* clobber */
 		args->ctr1 = ((u64) hi << 32) | lo;
 	}
 }
@@ -102,9 +102,10 @@ void krun_reset_msrs(void *unused)
 	    "wrmsr\n\t"
 	    "mov %2, %%ecx\n\t"
 	    "wrmsr\n\t"
-	    :				// out
-	    : "i"(IA32_MPERF), "i"(IA32_APERF), "i"(IA32_PERF_FIXED_CTR1) // in
-	    :"eax", "ecx", "edx");	// clobber
+	    : 					/* out */
+	    : "i"(IA32_MPERF), "i"(IA32_APERF),
+	      "i"(IA32_PERF_FIXED_CTR1)		/* in */
+	    :"eax", "ecx", "edx");		/* clobber */
 }
 
 u8 krun_get_arch_perf_ctr_version()
@@ -114,9 +115,9 @@ u8 krun_get_arch_perf_ctr_version()
 	asm volatile(
 	    "mov %1, %%eax\n\t"
 	    "cpuid\n\t"
-	    : "=a" (eax)			// out
-	    : "i"(CPUID_ARCH_PERF_CTRS) 	// in
-	    :"ebx", "ecx", "edx");		// clobber
+	    : "=a" (eax)			/* out */
+	    : "i"(CPUID_ARCH_PERF_CTRS) 	/* in */
+	    :"ebx", "ecx", "edx");		/* clobber */
 
 	return eax & CPUID_ARCH_PERF_CTRS_VERS;
 }
@@ -149,10 +150,10 @@ asmlinkage int sys_krun_read_msrs(int n_cores, bool ctr1_first, u64 *aperfs,
 
 	args.ctr1_first = ctr1_first;
 	for (core = 0; core < n_cores; core++) {
-		// Take readings
+		/* Take readings */
 		smp_call_function_single(core, krun_read_msrs, &args, 1);
 
-		// Copy results from kernel memory into userspace virtual memory
+		/* Copy results from kernel memory into userspace virtual memory */
 		err = copy_to_user(&aperfs[core], &args.aperf, sizeof(u64));
 		if (err != 0) {
 			printk("copy_to_user failed with %lu\n", err);
@@ -223,7 +224,7 @@ asmlinkage int sys_krun_configure(int n_cores) {
 		/* All of the flags are in the lower 32-bits of the MSR */
 		lo |= (EN1_OS | EN1_USR);
 		if (ctrs_version >= 3) {
-			// ANYTHR flag available only after performance counters v3
+			/* ANYTHR flag available only after performance counters v3 */
 			lo |= EN1_ANYTHR;
 		}
 

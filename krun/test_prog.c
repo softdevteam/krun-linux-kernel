@@ -56,11 +56,11 @@ int get_ctr1_width(void) {
 	int width;
 
 	asm volatile(
-	    "mov %2, %%eax\n\t"       	// pctr leaf
+	    "mov %2, %%eax\n\t"
 	    "cpuid\n\t"
-	    : "=a" (eax), "=d" (edx)    // out
-	    : "i"(CPUID_ARCH_PERF_CTRS) // in
-	    : "ebx", "ecx");            // clobber
+	    : "=a" (eax), "=d" (edx)    /* out */
+	    : "i"(CPUID_ARCH_PERF_CTRS) /* in*/
+	    : "ebx", "ecx");            /* clobber */
 	width = (edx & CPUID_FIXED_PERF_CTRS_WIDTH) >> 5;
 	printf("ctr1 width is %d\n", width);
 	return width;
@@ -125,7 +125,7 @@ void print_arrays(int n_cores, u_int64_t **aperfs, u_int64_t **mperfs,
 			printf("mperf: %016" PRIu64 "    ", mperfs[idx][core]);
 			printf("ctr1 : %016" PRIu64 "\n", ctr1s[idx][core]);
 
-			// check they make sense too
+			/* check they make sense too */
 			if (aperfs[0][core] > aperfs[1][core]) {
 				err(EXIT_FAILURE, "bad aperfs");
 			}
@@ -157,7 +157,7 @@ int main(void)
 	syscall(__NR_krun_configure, n_cores);
 	syscall(__NR_krun_reset_msrs, n_cores);
 
-	// continually read MSRs
+	/* continually read MSRs */
 	while (true) {
 		printf("Sampling MSRs. Press CTRL+C to stop.\n");
 		read_msrs_checked(n_cores, false, aperfs[0], mperfs[0], ctr1s[0]);
@@ -167,6 +167,6 @@ int main(void)
 		usleep(1 * 1000 * 500);
 		printf("\n");
 	}
-	// unreachable
+	/* unreachable */
 	return 0;
 }

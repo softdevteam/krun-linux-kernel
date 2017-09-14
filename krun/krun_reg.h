@@ -17,31 +17,42 @@
  * Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* MSRs */
+/*
+ * MSRs
+ */
 #define IA32_APERF		0xe8
 #define IA32_MPERF		0xe7
 #define IA32_PERF_FIXED_CTR1	0x30a
 #define IA32_FIXED_CTR_CTRL	0x38d
 #define IA32_PERF_GLOBAL_CTRL	0x38f
 
-/* Fields of the IA32_FIXED_CTR_CTRL MSR */
-// Enable couting in ring 0
+/*
+ * Fields of the IA32_FIXED_CTR_CTRL MSR
+ */
+/* Enable couting in ring 0 */
 #define EN1_OS		1 << 4
-// Enable counting in higher rings
+/* Enable counting in higher rings */
 #define EN1_USR		1 << 5
-// Enable counting for all core threads (if any)
+/* Enable counting for all core threads (if any) */
 #define EN1_ANYTHR	1 << 6
 
-/* Fields of the IA32_PERF_GLOBAL_CTRL MSR */
-// Enable IA32_PERF_FIXED_CTR1
-#define EN_FIXED_CTR1	1 << 1  // in the top 32-bits
+/*
+ * Fields of the IA32_PERF_GLOBAL_CTRL MSR
+ */
+/* Enable IA32_PERF_FIXED_CTR1 */
+#define EN_FIXED_CTR1	1 << 1  /* in the top 32-bits */
 
-/* Architectural performance counter CPUID leaf */
+/* CPUID leaves */
 #define	CPUID_ARCH_PERF_CTRS		0x0a
 
-/* Fields of EAX after querying CPUID_ARCH_PERF_CTRS */
-// Architectural performance counters version
+/*
+ * Fields of EAX after querying CPUID_ARCH_PERF_CTRS
+ */
+/* Architectural performance counters version */
 #define CPUID_ARCH_PERF_CTRS_VERS	0xff
-/* Fields of EDX after querying CPUID_ARCH_PERF_CTRS */
-// Fixed-function performance counters bit-width
+
+/*
+ * Fields of EDX after querying CPUID_ARCH_PERF_CTRS
+ */
+/* Fixed-function performance counters bit-width */
 #define CPUID_FIXED_PERF_CTRS_WIDTH	0x1fe0
