@@ -904,3 +904,7 @@ asmlinkage long sys_pkey_alloc(unsigned long flags, unsigned long init_val);
 asmlinkage long sys_pkey_free(int pkey);
 
 #endif
+asmlinkage int sys_krun_read_msrs(int n_cores, bool ctr1_first, u64 *aperfs,
+    u64 *mperfs, u64 *ctr1s);
+asmlinkage void sys_krun_reset_msrs(int n_cores);
+asmlinkage int sys_krun_configure(int n_cores);
