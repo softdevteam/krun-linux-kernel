@@ -8,10 +8,12 @@ which Krun uses for benchmarking. Although the existing `msr` (and `rmsr`)
 modules provide access to MSRs via device nodes, they introduce too much jitter
 into measurements.
 
-## Setup and Installation
+## Installation from Source
 
-This section describes the setup of the Krun kernel, including putting the
-kernel into `full tickless mode', which Krun insists upon.
+These instructions assume a Debian Linux system.
+
+Unfortunately, the process of building from source is complicated by the fact
+that Debian customise the Kernel.
 
 ### Step 1: Make Sure You Are on the Right Branch
 
@@ -26,18 +28,28 @@ $ git branch -r | grep krun
 
 Our branches are named `linux-\*-krun`.
 
-### Step 2: Configure and Build the Kernel
+### Step 2: Obtain a Patch of the Krun Changes
 
-Krun insists the kernel is running in "full tickless mode", thus minimising
+Since we need to inherit Debian's kernel customisations, we need to take a diff
+of this kernel's changes and apply it to Debian's kernel. The following command
+creates a diff:
+
+ $ git diff v4.9 > /tmp/krun-4.9.diff
+
+### Step 3: Apply the Patch to the Debian Sources
+
+Make sure you have the `linux-source` package installed, and that its version
+corresponds with the Krun branch you are using (check with `dpkg --list | grep
+linux-source`).
+
+ $ xzcat /usr/src/linux-source-4.9 | tar xf -
+ $ cd linux-source-4.9
+ $ patch -Ep1 < /tmp/krun-4.9.diff
+
+### Step 4: Configure and Build the Kernel
+
+Krun requires that the kernel is running in "full tickless mode", thus minimising
 regular tick interrupts where possible (for all but the boot CPU core).
-
-The kernel installation process varies depending on the Linux distribution. We
-assume you will be using Debian, since this is the Linux distribution Krun is
-designed to run on.
-
-On a Debian machine, the easiest way to build the kernel, and to have the
-custom headers installed in the right place, is to build and install deb
-packages.
 
  * Whilst running the stock Debian kernel (the configuration from the new
    kernel is inherited from the running kernel), run `make menuconfig` in the
@@ -56,24 +68,21 @@ packages.
 
  * Save and exit.
 
- * Run `make` (for a real benchmarking setup do *not* use `-j`)
-
  * Run `make deb-pkg`
 
-## Step 3: Install and Boot the New Kernel
+## Step 5: Install and Boot the New Kernel
 
 The previous step should have created deb packages in the parent directory. Next:
 
  * Install them with `dpkg -i <files>`, where `<files>` are the deb packages
-   you want to install. You will need to install the: `linux-firmware-image`,
+   you want to install. You will need to install the: `linux-image`,
    `linux-headers` and `linux-libc-dev` packages (whose exact names will vary).
 
- * Reboot the system and check the kernel is running with `uname -r`. Debian
-   should have set the kernel as the default, but sometimes (for unknown
-   reasons) it doesn't. If it has not selected your kernel, you need to edit
-   `/etc/default/grub` and run `update-grub` before rebooting.
+ * Reboot the system and check for `krun` in the kernel identity with `uname
+   -r`. Debian should have set the kernel as the default. If not, you need to
+   edit `/etc/default/grub` and run `update-grub` before rebooting again.
 
-## Step 3: Check the Kernel Over
+## Step 6: Check the Kernel Over
 
 Now you are running the Krun kernel. Let's check it all looks OK:
 
