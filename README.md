@@ -1,6 +1,6 @@
 # The Krun Linux Kernel
 
-This branch houses the customised Linux-4.9.30 Kernel for use with the
+This branch houses the customised Linux-4.9.88 Kernel for use with the
 [Krun Benchmarking System](https://github.com/softdevteam/krun).
 
 This kernel has additional system calls for low-latency access to several MSRs
@@ -17,7 +17,7 @@ that Debian customise the Kernel.
 
 ### Step 1: Make Sure You Are on the Right Branch
 
-This branch is for kernel version 4.9.30.
+This branch is for kernel version 4.9.88.
 
 If this is not the version you want, then switch branch. To see which Kernel
 versions we have patched, run:
@@ -34,7 +34,7 @@ Since we need to inherit Debian's kernel customisations, we need to take a diff
 of this kernel's changes and apply it to Debian's kernel. The following command
 creates a diff:
 
- $ git diff v4.9.30 > /tmp/krun-4.9.30.diff
+ $ git diff v4.9.88 > /tmp/krun-4.9.88.diff
 
 ### Step 3: Apply the Patch to the Debian Sources
 
@@ -44,7 +44,7 @@ linux-source`).
 
  $ xzcat /usr/src/linux-source-4.9 | tar xf -
  $ cd linux-source-4.9
- $ patch -Ep1 < /tmp/krun-4.9.30.diff
+ $ patch -Ep1 < /tmp/krun-4.9.88.diff
 
 ### Step 4: Configure and Build the Kernel
 
