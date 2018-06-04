@@ -35,9 +35,9 @@
  * uncomment these macros. These must stay in-sync with the syscall table.
  */
 #if 0
-#define __NR_krun_read_msrs	332
-#define __NR_krun_reset_msrs	333
-#define __NR_krun_configure	334
+#define __NR_krun_read_msrs	900
+#define __NR_krun_reset_msrs	901
+#define __NR_krun_configure	902
 #endif
 
 /* protos */
