@@ -339,6 +339,11 @@
 330	common	pkey_alloc		sys_pkey_alloc
 331	common	pkey_free		sys_pkey_free
 
+# Krun syscalls - large numbers to avoid ABI clashes with future kernel versions.
+900	64	krun_read_msrs		sys_krun_read_msrs
+901	64	krun_reset_msrs		sys_krun_reset_msrs
+902	64	krun_configure		sys_krun_configure
+
 #
 # x32-specific system call numbers start at 512 to avoid cache impact
 # for native 64-bit operation.
