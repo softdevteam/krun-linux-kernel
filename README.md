@@ -90,9 +90,6 @@ Now you are running the Krun kernel. Let's check it all looks OK:
    /boot/config-`uname -r` ``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
    output.
 
- * Use `grep -r krun /usr/include`. There should be some system call numbers
-   defined, starting `__NR_krun_` .
-
  * Check the syscalls work with `cd krun && make && ./test_prog` (in the
    top-level of this repo). This runs a program which resets the MSRs and
    prints them every so often. The counters should increase monotonically
