@@ -23,6 +23,7 @@ Version   | Branch
 3.16.36   | linux-3.16.36-krun
 4.9.0     | linux-4.9-krun
 4.9.30    | linux-4.9.30-krun
+4.9.88    | linux-4.9.88-krun
 
 
 Individual branches contain instructions on how to build from source.
