@@ -42,7 +42,7 @@ Make sure you have the `linux-source` package installed, and that its version
 corresponds with the Krun branch you are using (check with `dpkg --list | grep
 linux-source`).
 
- $ xzcat /usr/src/linux-source-4.9 | tar xf -
+ $ xzcat /usr/src/linux-source-4.9.tar.xz | tar xf -
  $ cd linux-source-4.9
  $ patch -Ep1 < /tmp/krun-4.9.88.diff
 
@@ -68,15 +68,15 @@ regular tick interrupts where possible (for all but the boot CPU core).
 
  * Save and exit.
 
- * Run `make deb-pkg`
+ * Run `make bindeb-pkg`
 
 ## Step 5: Install and Boot the New Kernel
 
 The previous step should have created deb packages in the parent directory. Next:
 
- * Install them with `dpkg -i <files>`, where `<files>` are the deb packages
-   you want to install. You will need to install the: `linux-image`,
-   `linux-headers` and `linux-libc-dev` packages (whose exact names will vary).
+ * Install the `linux-image` deb with `dpkg -i` (the exact filename will vary).
+
+ * Copy `krun/krun-syscall.h` into `/usr/include/x86_64-linux-gnu/sys/krun-syscall.h`.
 
  * Reboot the system and check for `krun` in the kernel identity with `uname
    -r`. Debian should have set the kernel as the default. If not, you need to
@@ -86,8 +86,8 @@ The previous step should have created deb packages in the parent directory. Next
 
 Now you are running the Krun kernel. Let's check it all looks OK:
 
- * Check the kernel is fully tickless with `grep NO_HZ_FULL_ALL
-   /boot/config-\`uname -r\``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
+ * Check the kernel is fully tickless with ``grep NO_HZ_FULL_ALL
+   /boot/config-`uname -r` ``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
    output.
 
  * Use `grep -r krun /usr/include`. There should be some system call numbers

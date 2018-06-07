@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <linux/kernel.h>
+#include <sys/krun-syscall.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -29,16 +30,6 @@
 #include <asm/unistd.h>
 
 #include "krun_reg.h"
-
-/*
- * For testing when you don't have the libc-dev headers installed, you can
- * uncomment these macros. These must stay in-sync with the syscall table.
- */
-#if 0
-#define __NR_krun_read_msrs	900
-#define __NR_krun_reset_msrs	901
-#define __NR_krun_configure	902
-#endif
 
 /* protos */
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
@@ -69,7 +60,7 @@ int get_ctr1_width(void) {
 void read_msrs_checked(int n_cores, bool ctr1_first, u_int64_t *aperfs,
     u_int64_t *mperfs, u_int64_t *ctr1s)
 {
-	int rv = syscall(__NR_krun_read_msrs, n_cores, ctr1_first, aperfs,
+	int rv = syscall(SYSCALL_KRUN_READ_MSRS, n_cores, ctr1_first, aperfs,
 	    mperfs, ctr1s);
 	if (rv != 0) {
 		err(EXIT_FAILURE, "krun_read_msrs failed");
@@ -154,8 +145,8 @@ int main(void)
 	ctr1s = alloc_array(n_cores);
 
 	printf("configuring for %d cores\n", n_cores);
-	syscall(__NR_krun_configure, n_cores);
-	syscall(__NR_krun_reset_msrs, n_cores);
+	syscall(SYSCALL_KRUN_CONFIGURE, n_cores);
+	syscall(SYSCALL_KRUN_RESET_MSRS, n_cores);
 
 	/* continually read MSRs */
 	while (true) {
