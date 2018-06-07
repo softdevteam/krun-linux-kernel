@@ -68,15 +68,15 @@ regular tick interrupts where possible (for all but the boot CPU core).
 
  * Save and exit.
 
- * Run `make deb-pkg`
+ * Run `make bindeb-pkg`
 
 ## Step 5: Install and Boot the New Kernel
 
 The previous step should have created deb packages in the parent directory. Next:
 
- * Install them with `dpkg -i <files>`, where `<files>` are the deb packages
-   you want to install. You will need to install the: `linux-image`,
-   `linux-headers` and `linux-libc-dev` packages (whose exact names will vary).
+ * Install the `linux-image` deb with `dpkg -i` (the exact filename will vary).
+
+ * Copy `krun/krun-syscall.h` into `/usr/include/x86_64-linux-gnu/sys/krun-syscall.h`.
 
  * Reboot the system and check for `krun` in the kernel identity with `uname
    -r`. Debian should have set the kernel as the default. If not, you need to
