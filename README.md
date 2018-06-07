@@ -42,7 +42,7 @@ Make sure you have the `linux-source` package installed, and that its version
 corresponds with the Krun branch you are using (check with `dpkg --list | grep
 linux-source`).
 
- $ xzcat /usr/src/linux-source-4.9 | tar xf -
+ $ xzcat /usr/src/linux-source-4.9.tar.xz | tar xf -
  $ cd linux-source-4.9
  $ patch -Ep1 < /tmp/krun-4.9.88.diff
 
@@ -86,8 +86,8 @@ The previous step should have created deb packages in the parent directory. Next
 
 Now you are running the Krun kernel. Let's check it all looks OK:
 
- * Check the kernel is fully tickless with `grep NO_HZ_FULL_ALL
-   /boot/config-\`uname -r\``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
+ * Check the kernel is fully tickless with ``grep NO_HZ_FULL_ALL
+   /boot/config-`uname -r` ``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
    output.
 
  * Use `grep -r krun /usr/include`. There should be some system call numbers
