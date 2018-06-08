@@ -41,9 +41,11 @@ regular tick interrupts where possible (for all but the boot CPU core).
    (except CPU 0)` (internally `NO_HZ_FULL_ALL`).
 
  * Go back to the top-level menu and find `General setup->Local Version` and
-   type in a meaningful name. As tempting as it is, *do not* use symbols in
-   this name, as it will cause the Debian package build to bomb out. This name
-   will help you identify if the system is running your kernel.
+   type in a meaningful name. This name will help you identify if the system is
+   running your kernel (via `uname -a`). Be careful not to use exotic symbols
+   in this field. Dots work, but underscores and hyphens confuse Debian's
+   package creation tools. When creating our binary packages, we use
+   `krun.<first 6 chars of git hash>`.
 
  * Save and exit.
 
