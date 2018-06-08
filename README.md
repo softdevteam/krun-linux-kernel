@@ -12,9 +12,6 @@ into measurements.
 
 These instructions assume a Debian Linux system.
 
-Unfortunately, the process of building from source is complicated by the fact
-that Debian customise the Kernel.
-
 ### Step 1: Make Sure You Are on the Right Branch
 
 This branch is for kernel version 4.9.88.
@@ -28,25 +25,7 @@ $ git branch -r | grep krun
 
 Our branches are named `linux-\*-krun`.
 
-### Step 2: Obtain a Patch of the Krun Changes
-
-Since we need to inherit Debian's kernel customisations, we need to take a diff
-of this kernel's changes and apply it to Debian's kernel. The following command
-creates a diff:
-
- $ git diff v4.9.88 > /tmp/krun-4.9.88.diff
-
-### Step 3: Apply the Patch to the Debian Sources
-
-Make sure you have the `linux-source` package installed, and that its version
-corresponds with the Krun branch you are using (check with `dpkg --list | grep
-linux-source`).
-
- $ xzcat /usr/src/linux-source-4.9.tar.xz | tar xf -
- $ cd linux-source-4.9
- $ patch -Ep1 < /tmp/krun-4.9.88.diff
-
-### Step 4: Configure and Build the Kernel
+### Step 2: Configure and Build the Kernel
 
 Krun requires that the kernel is running in "full tickless mode", thus minimising
 regular tick interrupts where possible (for all but the boot CPU core).
@@ -70,7 +49,7 @@ regular tick interrupts where possible (for all but the boot CPU core).
 
  * Run `make bindeb-pkg`
 
-## Step 5: Install and Boot the New Kernel
+## Step 3: Install and Boot the New Kernel
 
 The previous step should have created deb packages in the parent directory. Next:
 
@@ -82,7 +61,7 @@ The previous step should have created deb packages in the parent directory. Next
    -r`. Debian should have set the kernel as the default. If not, you need to
    edit `/etc/default/grub` and run `update-grub` before rebooting again.
 
-## Step 6: Check the Kernel Over
+## Step 4: Check the Kernel Over
 
 Now you are running the Krun kernel. Let's check it all looks OK:
 
