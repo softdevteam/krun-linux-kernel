@@ -11,6 +11,12 @@ jitter into measurements.
 For more information on Krun, see:
 http://soft-dev.org/src/krun/
 
+Binary Releases
+---------------
+
+Binary releases of the Krun Linux Kernel can be found
+[here](https://archive.org/details/krun_linux_kernel_binaries).
+
 Branches
 --------
 
