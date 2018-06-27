@@ -8,11 +8,16 @@ which Krun uses for benchmarking. Although the existing `msr` (and `rmsr`)
 modules provide access to MSRs via device nodes, they introduce too much jitter
 into measurements.
 
-## Installation from Source
+## Installation
 
 These instructions assume a Debian Linux system.
 
+Binary packages of the Krun Linux kernel can be found
+[here](https://archive.org/download/krun_linux_kernel_binaries).
+
 ### Step 1: Make Sure You Are on the Right Branch
+
+Skip this step if you are installing a binary package.
 
 This branch is for kernel version 4.9.88.
 
@@ -26,6 +31,8 @@ $ git branch -r | grep krun
 Our branches are named `linux-\*-krun`.
 
 ### Step 2: Configure and Build the Kernel
+
+Skip this step if you are installing a binary package.
 
 Krun requires that the kernel is running in "full tickless mode", thus minimising
 regular tick interrupts where possible (for all but the boot CPU core).
@@ -51,13 +58,18 @@ regular tick interrupts where possible (for all but the boot CPU core).
 
  * Run `make bindeb-pkg`
 
+Now you will have `.deb` packages in the parent directory.
+
 ## Step 3: Install and Boot the New Kernel
 
-The previous step should have created deb packages in the parent directory. Next:
+Next:
 
  * Install the `linux-image` deb with `dpkg -i` (the exact filename will vary).
 
- * Copy `krun/krun-syscall.h` into `/usr/include/x86_64-linux-gnu/sys/krun-syscall.h`.
+ * Copy `krun-syscall.h` (found in the `krun` directory if you are building
+   from source) into `/usr/include/x86_64-linux-gnu/sys/krun-syscall.h` (Sorry
+   about this, we tried to have the header included in a libc-dev package, but
+   sadly doing so upsets `apt-get` after such a package is installed).
 
  * Reboot the system and check for `krun` in the kernel identity with `uname
    -r`. Debian should have set the kernel as the default. If not, you need to
@@ -71,8 +83,8 @@ Now you are running the Krun kernel. Let's check it all looks OK:
    /boot/config-`uname -r` ``. You should see `CONFIG_NO_HZ_FULL_ALL=y` in the
    output.
 
- * Check the syscalls work with `cd krun && make && ./test_prog` (in the
-   top-level of this repo). This runs a program which resets the MSRs and
+ * You can check the syscalls work with `cd krun && make && ./test_prog` (in the
+   top-level of the source this repo). This runs a program which resets the MSRs and
    prints them every so often. The counters should increase monotonically
    (unless you run long enough to see an overflow).
 
